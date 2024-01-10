@@ -1,4 +1,4 @@
-    const scene = new THREE.Scene();
+        const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -9,6 +9,10 @@
     function loadModel(modelPath) {
         const loader = new THREE.STLLoader();
         loader.load(modelPath, function (geometry) {
+            if (model) {
+                scene.remove(model);
+            }
+
             const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
             model = new THREE.Mesh(geometry, material);
 
@@ -42,16 +46,10 @@
     }
 
     function switchToQutub1Minar() {
-        if (model) {
-            scene.remove(model);
-        }
         loadModel('models/qutub1minar.stl');
     }
 
     function switchToFrustumQutubMinar() {
-        if (model) {
-            scene.remove(model);
-        }
         loadModel('models/frustumqutubminar.stl');
     }
 
