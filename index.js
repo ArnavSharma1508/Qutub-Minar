@@ -11,6 +11,7 @@ document.body.appendChild(renderer.domElement);
 const loader = new STLLoader();
 let originalModel;
 let frustumModel;
+let halfModel;
 
 // Load the original model
 loader.load('models/qutub1minar.stl', function (geometry) {
@@ -49,6 +50,22 @@ loader.load('models/frustumqutubminar.stl', function (geometry) {
   console.error(error);
 });
 
+// Load the half model
+loader.load('models/halfqutubminar.stl', function (geometry) {
+  const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
+  halfModel = new THREE.Mesh(geometry, material);
+  halfModel.position.set(0, 2, 0);
+  halfModel.rotation.x = Math.PI * 1.5;
+  halfModel.material.color.set(0xffffff); // Set material color to white
+  halfModel.visible = false; // Initially set to invisible
+  scene.add(halfModel);
+  halfModel.updateMatrix();
+  halfModel.geometry.applyMatrix4(halfModel.matrix);
+  halfModel.rotation.set(0, 0, 0);
+}, undefined, function (error) {
+  console.error(error);
+});
+
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directionalLight.position.set(5, 5, 5);
 scene.add(directionalLight);
@@ -74,22 +91,13 @@ window.addEventListener('resize', function () {
 });
 
 // Add buttons to switch between models
-const switchToOriginalButton = document.createElement('button');
-switchToOriginalButton.innerHTML = 'Switch to Original Model';
-switchToOriginalButton.addEventListener('click', function () {
-  originalModel.visible = true;
-  frustumModel.visible = false;
-});
-
-const switchToFrustrumButton = document.createElement('button');
-switchToFrustrumButton.innerHTML = 'Switch to Frustum Model';
-switchToFrustrumButton.addEventListener('click', function () {
-  originalModel.visible = false;
-  frustumModel.visible = true;
-});
+const switchToOriginalButton = createSwitchButton('Switch to Original Model', originalModel);
+const switchToFrustrumButton = createSwitchButton('Switch to Frustum Model', frustumModel);
+const switchToHalfButton = createSwitchButton('Switch to Half Model', halfModel);
 
 document.body.appendChild(switchToOriginalButton);
 document.body.appendChild(switchToFrustrumButton);
+document.body.appendChild(switchToHalfButton);
 
 const animate = function () {
   requestAnimationFrame(animate);
@@ -98,5 +106,17 @@ const animate = function () {
 
   renderer.render(scene, camera);
 };
+
+function createSwitchButton(text, targetModel) {
+  const button = document.createElement('button');
+  button.innerHTML = text;
+  button.addEventListener('click', function () {
+    originalModel.visible = false;
+    frustumModel.visible = false;
+    halfModel.visible = false;
+    targetModel.visible = true;
+  });
+  return button;
+}
 
 animate();
