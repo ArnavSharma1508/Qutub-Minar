@@ -9,21 +9,19 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const loader = new STLLoader();
-let originalModel;
-let frustumModel;
-let halfModel;
+let currentModel;
 
 // Load the original model
 loader.load('models/qutub1minar.stl', function (geometry) {
   const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
-  originalModel = new THREE.Mesh(geometry, material);
-  originalModel.position.set(0, 2, 0);
-  originalModel.rotation.x = Math.PI * 1.5;
-  scene.add(originalModel);
-  originalModel.updateMatrix();
-  originalModel.geometry.applyMatrix4(originalModel.matrix);
-  originalModel.rotation.set(0, 0, 0);
-  const boundingBox = new THREE.Box3().setFromObject(originalModel);
+  currentModel = new THREE.Mesh(geometry, material);
+  currentModel.position.set(0, 2, 0);
+  currentModel.rotation.x = Math.PI * 1.5;
+  scene.add(currentModel);
+  currentModel.updateMatrix();
+  currentModel.geometry.applyMatrix4(currentModel.matrix);
+  currentModel.rotation.set(0, 0, 0);
+  const boundingBox = new THREE.Box3().setFromObject(currentModel);
   const size = boundingBox.getSize(new THREE.Vector3());
   const maxSize = Math.max(size.x, size.y, size.z);
   const grid = new THREE.GridHelper(maxSize * 2, 10, 0x888888, 0x888888);
@@ -31,36 +29,6 @@ loader.load('models/qutub1minar.stl', function (geometry) {
   grid.position.y = 5;
   grid.name = 'grid';
   scene.add(grid);
-}, undefined, function (error) {
-  console.error(error);
-});
-
-// Load the frustum model
-loader.load('models/frustumqutubminar.stl', function (geometry) {
-  const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
-  frustumModel = new THREE.Mesh(geometry, material);
-  frustumModel.position.set(0, 2, 0);
-  frustumModel.rotation.x = Math.PI * 1.5;
-  frustumModel.visible = false; // Initially set to invisible
-  scene.add(frustumModel);
-  frustumModel.updateMatrix();
-  frustumModel.geometry.applyMatrix4(frustumModel.matrix);
-  frustumModel.rotation.set(0, 0, 0);
-}, undefined, function (error) {
-  console.error(error);
-});
-
-// Load the half model
-loader.load('models/halfqutubminar.stl', function (geometry) {
-  const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
-  halfModel = new THREE.Mesh(geometry, material);
-  halfModel.position.set(0, 2, 0);
-  halfModel.rotation.x = Math.PI * 1.5;
-  halfModel.visible = false; // Initially set to invisible
-  scene.add(halfModel);
-  halfModel.updateMatrix();
-  halfModel.geometry.applyMatrix4(halfModel.matrix);
-  halfModel.rotation.set(0, 0, 0);
 }, undefined, function (error) {
   console.error(error);
 });
@@ -90,22 +58,27 @@ window.addEventListener('resize', function () {
 });
 
 // Add buttons to switch between models
-const switchToOriginalButton = createSwitchButton('Switch to Original Model', originalModel);
-const switchToFrustrumButton = createSwitchButton('Switch to Frustum Model', frustumModel);
-const switchToHalfButton = createSwitchButton('Switch to Half Model', halfModel);
-
-document.body.appendChild(switchToOriginalButton);
-document.body.appendChild(switchToFrustrumButton);
-document.body.appendChild(switchToHalfButton);
+const switchButton = createSwitchButton('Switch Model', currentModel);
+document.body.appendChild(switchButton);
 
 function createSwitchButton(text, targetModel) {
   const button = document.createElement('button');
   button.innerHTML = text;
   button.addEventListener('click', function () {
-    originalModel.visible = false;
-    frustumModel.visible = false;
-    halfModel.visible = false;
-    targetModel.visible = true;
+    scene.remove(targetModel); // Remove the current model
+    // Load the new model (change the file path accordingly)
+    loader.load('models/frustumqutubminar.stl', function (geometry) {
+      const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
+      currentModel = new THREE.Mesh(geometry, material);
+      currentModel.position.set(0, 2, 0);
+      currentModel.rotation.x = Math.PI * 1.5;
+      scene.add(currentModel);
+      currentModel.updateMatrix();
+      currentModel.geometry.applyMatrix4(currentModel.matrix);
+      currentModel.rotation.set(0, 0, 0);
+    }, undefined, function (error) {
+      console.error(error);
+    });
   });
   return button;
 }
