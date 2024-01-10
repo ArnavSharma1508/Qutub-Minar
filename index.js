@@ -44,6 +44,8 @@
             console.error(error);
         });
     }
+    document.getElementById('qutub1minarBtn').addEventListener('click', switchToQutub1Minar);
+    document.getElementById('frustumQutubMinarBtn').addEventListener('click', switchToFrustumQutubMinar);
 
     function switchToQutub1Minar() {
         loadModel('models/qutub1minar.stl');
@@ -52,7 +54,6 @@
     function switchToFrustumQutubMinar() {
         loadModel('models/frustumqutubminar.stl');
     }
-
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(5, 5, 5);
     scene.add(directionalLight);
