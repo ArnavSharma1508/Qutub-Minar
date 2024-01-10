@@ -9,45 +9,51 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const loader = new STLLoader();
-let model;
+let originalModel;
+let frustumModel;
 
+// Load the original model
 loader.load('models/qutub1minar.stl', function (geometry) {
-const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
-model = new THREE.Mesh(geometry, material);
-
-model.position.set(0, 2, 0);
-
-model.rotation.x = Math.PI * 1.5;
-
-scene.add(model);
-
-model.updateMatrix();
-model.geometry.applyMatrix4(model.matrix);
-
-model.rotation.set(0, 0, 0);
-const existingGrid = scene.getObjectByName('grid');
-if (existingGrid) {
-	scene.remove(existingGrid);
-}
-const boundingBox = new THREE.Box3().setFromObject(model);
-const size = boundingBox.getSize(new THREE.Vector3());
-const maxSize = Math.max(size.x, size.y, size.z);
-
-const grid = new THREE.GridHelper(maxSize * 2, 10, 0x888888, 0x888888);
-grid.position.copy(boundingBox.getCenter(new THREE.Vector3()));
-grid.position.y = 5; // Adjust the grid position to be below the model
-grid.name = 'grid';
-scene.add(grid);
+  const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
+  originalModel = new THREE.Mesh(geometry, material);
+  originalModel.position.set(0, 2, 0);
+  originalModel.rotation.x = Math.PI * 1.5;
+  scene.add(originalModel);
+  originalModel.updateMatrix();
+  originalModel.geometry.applyMatrix4(originalModel.matrix);
+  originalModel.rotation.set(0, 0, 0);
+  const boundingBox = new THREE.Box3().setFromObject(originalModel);
+  const size = boundingBox.getSize(new THREE.Vector3());
+  const maxSize = Math.max(size.x, size.y, size.z);
+  const grid = new THREE.GridHelper(maxSize * 2, 10, 0x888888, 0x888888);
+  grid.position.copy(boundingBox.getCenter(new THREE.Vector3()));
+  grid.position.y = 5;
+  grid.name = 'grid';
+  scene.add(grid);
 }, undefined, function (error) {
-console.error(error);
+  console.error(error);
 });
 
+// Load the frustum model
+loader.load('models/frustumqutubminar.stl', function (geometry) {
+  const material = new THREE.MeshPhongMaterial({ color: 0xff0000, specular: 0x111111, shininess: 200 });
+  frustumModel = new THREE.Mesh(geometry, material);
+  frustumModel.position.set(0, 2, 0);
+  frustumModel.rotation.x = Math.PI * 1.5;
+  frustumModel.visible = false; // Initially set to invisible
+  scene.add(frustumModel);
+  frustumModel.updateMatrix();
+  frustumModel.geometry.applyMatrix4(frustumModel.matrix);
+  frustumModel.rotation.set(0, 0, 0);
+}, undefined, function (error) {
+  console.error(error);
+});
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directionalLight.position.set(5, 5, 5);
 scene.add(directionalLight);
 
-const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
+const ambientLight = new THREE.AmbientLight(0x404040);
 scene.add(ambientLight);
 
 camera.position.set(100, 100, 10);
@@ -55,24 +61,42 @@ camera.lookAt(0, 0, 0);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.ROTATE, RIGHT: THREE.MOUSE.DOLLY };
-controls.enableDamping = false; // Disable damping for now
+controls.enableDamping = false;
 
 window.addEventListener('resize', function () {
-const newWidth = window.innerWidth;
-const newHeight = window.innerHeight;
+  const newWidth = window.innerWidth;
+  const newHeight = window.innerHeight;
 
-camera.aspect = newWidth / newHeight;
-camera.updateProjectionMatrix();
+  camera.aspect = newWidth / newHeight;
+  camera.updateProjectionMatrix();
 
-renderer.setSize(newWidth, newHeight);
+  renderer.setSize(newWidth, newHeight);
 });
 
+// Add buttons to switch between models
+const switchToOriginalButton = document.createElement('button');
+switchToOriginalButton.innerHTML = 'Switch to Original Model';
+switchToOriginalButton.addEventListener('click', function () {
+  originalModel.visible = true;
+  frustumModel.visible = false;
+});
+
+const switchToFrustrumButton = document.createElement('button');
+switchToFrustrumButton.innerHTML = 'Switch to Frustum Model';
+switchToFrustrumButton.addEventListener('click', function () {
+  originalModel.visible = false;
+  frustumModel.visible = true;
+});
+
+document.body.appendChild(switchToOriginalButton);
+document.body.appendChild(switchToFrustrumButton);
+
 const animate = function () {
-requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
 
-controls.update();
+  controls.update();
 
-renderer.render(scene, camera);
+  renderer.render(scene, camera);
 };
 
 animate();
