@@ -9,19 +9,20 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const loader = new STLLoader();
-let currentModel;
+let originalModel;
+let frustumModel;
 
 // Load the original model
 loader.load('models/qutub1minar.stl', function (geometry) {
   const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
-  currentModel = new THREE.Mesh(geometry, material);
-  currentModel.position.set(0, 2, 0);
-  currentModel.rotation.x = Math.PI * 1.5;
-  scene.add(currentModel);
-  currentModel.updateMatrix();
-  currentModel.geometry.applyMatrix4(currentModel.matrix);
-  currentModel.rotation.set(0, 0, 0);
-  const boundingBox = new THREE.Box3().setFromObject(currentModel);
+  originalModel = new THREE.Mesh(geometry, material);
+  originalModel.position.set(0, 2, 0);
+  originalModel.rotation.x = Math.PI * 1.5;
+  scene.add(originalModel);
+  originalModel.updateMatrix();
+  originalModel.geometry.applyMatrix4(originalModel.matrix);
+  originalModel.rotation.set(0, 0, 0);
+  const boundingBox = new THREE.Box3().setFromObject(originalModel);
   const size = boundingBox.getSize(new THREE.Vector3());
   const maxSize = Math.max(size.x, size.y, size.z);
   const grid = new THREE.GridHelper(maxSize * 2, 10, 0x888888, 0x888888);
@@ -29,6 +30,21 @@ loader.load('models/qutub1minar.stl', function (geometry) {
   grid.position.y = 5;
   grid.name = 'grid';
   scene.add(grid);
+}, undefined, function (error) {
+  console.error(error);
+});
+
+// Load the frustum model
+loader.load('models/frustumqutubminar.stl', function (geometry) {
+  const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
+  frustumModel = new THREE.Mesh(geometry, material);
+  frustumModel.position.set(0, 2, 0);
+  frustumModel.rotation.x = Math.PI * 1.5;
+  frustumModel.visible = false; // Initially set to invisible
+  scene.add(frustumModel);
+  frustumModel.updateMatrix();
+  frustumModel.geometry.applyMatrix4(frustumModel.matrix);
+  frustumModel.rotation.set(0, 0, 0);
 }, undefined, function (error) {
   console.error(error);
 });
@@ -58,30 +74,22 @@ window.addEventListener('resize', function () {
 });
 
 // Add buttons to switch between models
-const switchButton = createSwitchButton('Switch Model', currentModel);
-document.body.appendChild(switchButton);
+const switchToOriginalButton = document.createElement('button');
+switchToOriginalButton.innerHTML = 'Switch to Original Model';
+switchToOriginalButton.addEventListener('click', function () {
+  originalModel.visible = true;
+  frustumModel.visible = false;
+});
 
-function createSwitchButton(text, targetModel) {
-  const button = document.createElement('button');
-  button.innerHTML = text;
-  button.addEventListener('click', function () {
-    scene.remove(targetModel); // Remove the current model
-    // Load the new model (change the file path accordingly)
-    loader.load('models/frustumqutubminar.stl', function (geometry) {
-      const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
-      currentModel = new THREE.Mesh(geometry, material);
-      currentModel.position.set(0, 2, 0);
-      currentModel.rotation.x = Math.PI * 1.5;
-      scene.add(currentModel);
-      currentModel.updateMatrix();
-      currentModel.geometry.applyMatrix4(currentModel.matrix);
-      currentModel.rotation.set(0, 0, 0);
-    }, undefined, function (error) {
-      console.error(error);
-    });
-  });
-  return button;
-}
+const switchToFrustrumButton = document.createElement('button');
+switchToFrustrumButton.innerHTML = 'Switch to Frustum Model';
+switchToFrustrumButton.addEventListener('click', function () {
+  originalModel.visible = false;
+  frustumModel.visible = true;
+});
+
+document.body.appendChild(switchToOriginalButton);
+document.body.appendChild(switchToFrustrumButton);
 
 const animate = function () {
   requestAnimationFrame(animate);
