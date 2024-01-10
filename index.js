@@ -36,7 +36,7 @@ loader.load('models/qutub1minar.stl', function (geometry) {
 
 // Load the frustum model
 loader.load('models/frustumqutubminar.stl', function (geometry) {
-  const material = new THREE.MeshPhongMaterial({ color: 0xff0000, specular: 0x111111, shininess: 200 });
+  const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
   frustumModel = new THREE.Mesh(geometry, material);
   frustumModel.position.set(0, 2, 0);
   frustumModel.rotation.x = Math.PI * 1.5;
