@@ -56,7 +56,6 @@ loader.load('models/halfqutubminar.stl', function (geometry) {
   halfModel = new THREE.Mesh(geometry, material);
   halfModel.position.set(0, 2, 0);
   halfModel.rotation.x = Math.PI * 1.5;
-  halfModel.material.color.set(0xffffff); // Set material color to white
   halfModel.visible = false; // Initially set to invisible
   scene.add(halfModel);
   halfModel.updateMatrix();
@@ -99,14 +98,6 @@ document.body.appendChild(switchToOriginalButton);
 document.body.appendChild(switchToFrustrumButton);
 document.body.appendChild(switchToHalfButton);
 
-const animate = function () {
-  requestAnimationFrame(animate);
-
-  controls.update();
-
-  renderer.render(scene, camera);
-};
-
 function createSwitchButton(text, targetModel) {
   const button = document.createElement('button');
   button.innerHTML = text;
@@ -118,5 +109,13 @@ function createSwitchButton(text, targetModel) {
   });
   return button;
 }
+
+const animate = function () {
+  requestAnimationFrame(animate);
+
+  controls.update();
+
+  renderer.render(scene, camera);
+};
 
 animate();
