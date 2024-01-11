@@ -61,9 +61,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.ROTATE, RIGHT: THREE.MOUSE.DOLLY };
 controls.enableDamping = false;
 
-// Create a grid that spans the entire scene
-const size = boundingBox.getSize(new THREE.Vector3());
-const maxSize = Math.max(size.x, size.y, size.z);
+const maxSize = 200;
 const grid = new THREE.GridHelper(maxSize, 10, 0x888888, 0x888888);
 grid.position.y = 5;
 scene.add(grid);
