@@ -51,6 +51,7 @@ controls.enableDamping = false;
 // Create a grid that spans the entire scene
 const gridSize = 200;
 const grid = new THREE.GridHelper(gridSize, 10, 0x888888, 0x888888);
+grid.position.y = 5;
 scene.add(grid);
 
 window.addEventListener('resize', function () {
