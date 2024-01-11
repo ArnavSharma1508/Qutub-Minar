@@ -62,8 +62,9 @@ controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.ROTATE, RIG
 controls.enableDamping = false;
 
 // Create a grid that spans the entire scene
-const gridSize = 200;
-const grid = new THREE.GridHelper(gridSize, 10, 0x888888, 0x888888);
+const size = boundingBox.getSize(new THREE.Vector3());
+const maxSize = Math.max(size.x, size.y, size.z);
+const grid = new THREE.GridHelper(maxSize, 10, 0x888888, 0x888888);
 scene.add(grid);
 
 window.addEventListener('resize', function () {
