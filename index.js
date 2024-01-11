@@ -65,6 +65,7 @@ controls.enableDamping = false;
 const size = boundingBox.getSize(new THREE.Vector3());
 const maxSize = Math.max(size.x, size.y, size.z);
 const grid = new THREE.GridHelper(maxSize, 10, 0x888888, 0x888888);
+grid.position.y = 5;
 scene.add(grid);
 
 window.addEventListener('resize', function () {
