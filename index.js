@@ -2,9 +2,11 @@ import * as THREE from 'three';
 import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: !isMobile });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -46,6 +48,11 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.ROTATE, RIGHT: THREE.MOUSE.DOLLY };
 controls.enableDamping = false;
 
+// Create a grid that spans the entire scene
+const gridSize = 200;
+const grid = new THREE.GridHelper(gridSize, 10, 0x888888, 0x888888);
+scene.add(grid);
+
 window.addEventListener('resize', function () {
   const newWidth = window.innerWidth;
   const newHeight = window.innerHeight;
@@ -61,7 +68,7 @@ const buttonsContainer = document.getElementById('buttonsContainer');
 function createButton(text, index) {
   const button = document.createElement('button');
   button.innerHTML = text;
-  button.style.marginBottom = '10px'; // Adjust spacing between buttons
+  button.style.marginBottom = '10px';
   button.addEventListener('click', function () {
     models.forEach((model, i) => (model.visible = i === index));
   });
