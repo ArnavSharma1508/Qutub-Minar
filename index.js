@@ -76,7 +76,7 @@ function createButton(text, index) {
   return button;
 }
 
-['Qutub Minar', 'Frustum Qutub Minar', 'Half Qutub Minar'].forEach((text, index) => {
+['Half Qutub Minar', 'Half Qutub Minar', 'Frustum Qutub Minar'].forEach((text, index) => {
   const button = createButton(text, index);
   buttonsContainer.appendChild(button);
 });
