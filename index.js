@@ -9,61 +9,28 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 const loader = new STLLoader();
-let originalModel;
-let frustumModel;
-let halfModel;
+let models = [];
 
-// Load the original model
-loader.load('models/qutub1minar.stl', function (geometry) {
-  const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
-  originalModel = new THREE.Mesh(geometry, material);
-  originalModel.position.set(0, 2, 0);
-  originalModel.rotation.x = Math.PI * 1.5;
-  scene.add(originalModel);
-  originalModel.updateMatrix();
-  originalModel.geometry.applyMatrix4(originalModel.matrix);
-  originalModel.rotation.set(0, 0, 0);
-  const boundingBox = new THREE.Box3().setFromObject(originalModel);
-  const size = boundingBox.getSize(new THREE.Vector3());
-  const maxSize = Math.max(size.x, size.y, size.z);
-  const grid = new THREE.GridHelper(maxSize * 2, 10, 0x888888, 0x888888);
-  grid.position.copy(boundingBox.getCenter(new THREE.Vector3()));
-  grid.position.y = 5;
-  grid.name = 'grid';
-  scene.add(grid);
-}, undefined, function (error) {
-  console.error(error);
-});
+function loadModel(path, visible) {
+  loader.load(path, function (geometry) {
+    const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
+    const model = new THREE.Mesh(geometry, material);
+    model.position.set(0, 2, 0);
+    model.rotation.x = Math.PI * 1.5;
+    model.visible = visible;
+    scene.add(model);
+    model.updateMatrix();
+    model.geometry.applyMatrix4(model.matrix);
+    model.rotation.set(0, 0, 0);
+    models.push(model);
+  }, undefined, function (error) {
+    console.error(error);
+  });
+}
 
-// Load the frustum model
-loader.load('models/frustumqutubminar.stl', function (geometry) {
-  const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
-  frustumModel = new THREE.Mesh(geometry, material);
-  frustumModel.position.set(0, 2, 0);
-  frustumModel.rotation.x = Math.PI * 1.5;
-  frustumModel.visible = false; // Initially set to invisible
-  scene.add(frustumModel);
-  frustumModel.updateMatrix();
-  frustumModel.geometry.applyMatrix4(frustumModel.matrix);
-  frustumModel.rotation.set(0, 0, 0);
-}, undefined, function (error) {
-  console.error(error);
-});
-
-// Load the half model
-loader.load('models/halfqutubminar.stl', function (geometry) {
-  const material = new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0x111111, shininess: 200 });
-  halfModel = new THREE.Mesh(geometry, material);
-  halfModel.position.set(0, 2, 0);
-  halfModel.rotation.x = Math.PI * 1.5;
-  halfModel.visible = false; // Initially set to invisible
-  scene.add(halfModel);
-  halfModel.updateMatrix();
-  halfModel.geometry.applyMatrix4(halfModel.matrix);
-  halfModel.rotation.set(0, 0, 0);
-}, undefined, function (error) {
-  console.error(error);
-});
+loadModel('models/qutub1minar.stl', true);
+loadModel('models/frustumqutubminar.stl', false);
+loadModel('models/halfqutubminar.stl', false);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directionalLight.position.set(5, 5, 5);
@@ -89,42 +56,26 @@ window.addEventListener('resize', function () {
   renderer.setSize(newWidth, newHeight);
 });
 
-// Add buttons to switch between models
 const buttonsContainer = document.getElementById('buttonsContainer');
-const switchToOriginalButton = createButton('Qutub Minar', function () {
-  originalModel.visible = true;
-  frustumModel.visible = false;
-  halfModel.visible = false;
-});
-const switchToFrustrumButton = createButton('Frustum Qutub Minar', function () {
-  originalModel.visible = false;
-  frustumModel.visible = true;
-  halfModel.visible = false;
-});
-const switchToHalfButton = createButton('Half Qutub Minar', function () {
-  originalModel.visible = false;
-  frustumModel.visible = false;
-  halfModel.visible = true;
-});
 
-// Append buttons to the container
-buttonsContainer.appendChild(switchToOriginalButton);
-buttonsContainer.appendChild(switchToFrustrumButton);
-buttonsContainer.appendChild(switchToHalfButton);
-
-function createButton(text, onClick) {
+function createButton(text, index) {
   const button = document.createElement('button');
   button.innerHTML = text;
   button.style.marginBottom = '10px'; // Adjust spacing between buttons
-  button.addEventListener('click', onClick);
+  button.addEventListener('click', function () {
+    models.forEach((model, i) => (model.visible = i === index));
+  });
   return button;
 }
 
+['Qutub Minar', 'Frustum Qutub Minar', 'Half Qutub Minar'].forEach((text, index) => {
+  const button = createButton(text, index);
+  buttonsContainer.appendChild(button);
+});
+
 const animate = function () {
   requestAnimationFrame(animate);
-
   controls.update();
-
   renderer.render(scene, camera);
 };
 
