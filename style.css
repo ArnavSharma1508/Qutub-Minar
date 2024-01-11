@@ -13,6 +13,14 @@ body {
   flex-direction: column;
 }
 
-button {
-  margin-bottom: 10px;
-}
+  button {
+    margin-bottom: 10px;
+    width: 150px;
+    height: 40px;
+    background: linear-gradient(to top, #09203f 0%, #537895 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
