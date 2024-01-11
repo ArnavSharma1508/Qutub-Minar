@@ -1,0 +1,17 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+#buttonsContainer {
+  position: absolute;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media only screen and (max-width: 600px) {
+  #buttonsContainer {
+    top: 10px;
+  }
+}
