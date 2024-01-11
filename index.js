@@ -91,17 +91,17 @@ window.addEventListener('resize', function () {
 
 // Add buttons to switch between models
 const buttonsContainer = document.getElementById('buttonsContainer');
-const switchToOriginalButton = createButton('Switch to Original Model', function () {
+const switchToOriginalButton = createButton('Qutub Minar', function () {
   originalModel.visible = true;
   frustumModel.visible = false;
   halfModel.visible = false;
 });
-const switchToFrustrumButton = createButton('Switch to Frustum Model', function () {
+const switchToFrustrumButton = createButton('Frustum Qutub Minar', function () {
   originalModel.visible = false;
   frustumModel.visible = true;
   halfModel.visible = false;
 });
-const switchToHalfButton = createButton('Switch to Half Model', function () {
+const switchToHalfButton = createButton('Half Qutub Minar', function () {
   originalModel.visible = false;
   frustumModel.visible = false;
   halfModel.visible = true;
