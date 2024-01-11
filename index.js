@@ -12,6 +12,7 @@ document.body.appendChild(renderer.domElement);
 
 const loader = new STLLoader();
 let models = [];
+let currentModelIndex = 0; // Index of the currently visible model
 
 function loadModel(path, visible) {
   loader.load(path, function (geometry) {
@@ -49,9 +50,8 @@ controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.ROTATE, RIG
 controls.enableDamping = false;
 
 // Create a grid that spans the entire scene
-const gridSize = 200;
+const gridSize = 100;
 const grid = new THREE.GridHelper(gridSize, 10, 0x888888, 0x888888);
-grid.position.y = 5;
 scene.add(grid);
 
 window.addEventListener('resize', function () {
@@ -71,12 +71,17 @@ function createButton(text, index) {
   button.innerHTML = text;
   button.style.marginBottom = '10px';
   button.addEventListener('click', function () {
-    models.forEach((model, i) => (model.visible = i === index));
+    // Hide the current model
+    models[currentModelIndex].visible = false;
+
+    // Show the clicked model
+    models[index].visible = true;
+    currentModelIndex = index;
   });
   return button;
 }
 
-['Half Qutub Minar', 'Half Qutub Minar', 'Frustum Qutub Minar'].forEach((text, index) => {
+['Qutub Minar', 'Frustum Qutub Minar', 'Half Qutub Minar'].forEach((text, index) => {
   const button = createButton(text, index);
   buttonsContainer.appendChild(button);
 });
