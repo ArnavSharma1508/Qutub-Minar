@@ -90,33 +90,35 @@ window.addEventListener('resize', function () {
 });
 
 // Add buttons to switch between models
-const switchToOriginalButton = document.createElement('button');
-switchToOriginalButton.innerHTML = 'Switch to Original Model';
-switchToOriginalButton.addEventListener('click', function () {
+const buttonsContainer = document.getElementById('buttonsContainer');
+const switchToOriginalButton = createButton('Switch to Original Model', function () {
   originalModel.visible = true;
   frustumModel.visible = false;
   halfModel.visible = false;
 });
-
-const switchToFrustrumButton = document.createElement('button');
-switchToFrustrumButton.innerHTML = 'Switch to Frustum Model';
-switchToFrustrumButton.addEventListener('click', function () {
+const switchToFrustrumButton = createButton('Switch to Frustum Model', function () {
   originalModel.visible = false;
   frustumModel.visible = true;
   halfModel.visible = false;
 });
-
-const switchToHalfButton = document.createElement('button');
-switchToHalfButton.innerHTML = 'Switch to Half Model';
-switchToHalfButton.addEventListener('click', function () {
+const switchToHalfButton = createButton('Switch to Half Model', function () {
   originalModel.visible = false;
   frustumModel.visible = false;
   halfModel.visible = true;
 });
 
-document.body.appendChild(switchToOriginalButton);
-document.body.appendChild(switchToFrustrumButton);
-document.body.appendChild(switchToHalfButton);
+// Append buttons to the container
+buttonsContainer.appendChild(switchToOriginalButton);
+buttonsContainer.appendChild(switchToFrustrumButton);
+buttonsContainer.appendChild(switchToHalfButton);
+
+function createButton(text, onClick) {
+  const button = document.createElement('button');
+  button.innerHTML = text;
+  button.style.marginBottom = '10px'; // Adjust spacing between buttons
+  button.addEventListener('click', onClick);
+  return button;
+}
 
 const animate = function () {
   requestAnimationFrame(animate);
