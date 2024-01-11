@@ -118,27 +118,6 @@ document.body.appendChild(switchToOriginalButton);
 document.body.appendChild(switchToFrustrumButton);
 document.body.appendChild(switchToHalfButton);
 
-const mediaQuery = window.matchMedia('(max-width: 600px)');
-
-// Update button styles based on the screen width
-function handleMediaQuery(event) {
-  if (event.matches) {
-    // On smaller screens, make buttons block-level for full width
-    switchToOriginalButton.style.display = 'block';
-    switchToFrustrumButton.style.display = 'block';
-  } else {
-    // On larger screens, revert to inline-block
-    switchToOriginalButton.style.display = 'inline-block';
-    switchToFrustrumButton.style.display = 'inline-block';
-  }
-}
-
-// Attach listener to handle changes in media query
-mediaQuery.addListener(handleMediaQuery);
-
-// Initial call to set button styles based on the initial screen width
-handleMediaQuery(mediaQuery);
-
 const animate = function () {
   requestAnimationFrame(animate);
 
